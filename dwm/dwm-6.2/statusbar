@@ -1,0 +1,41 @@
+#!/bin/sh
+#  _____ _        _             _
+# /  ___| |      | |           | |
+# \ `--.| |_ __ _| |_ _   _ ___| |__   __ _ _ __
+#  `--. | __/ _` | __| | | / __| '_ \ / _` | '__|
+# /\__/ | || (_| | |_| |_| \__ | |_) | (_| | |
+# \____/ \__\__,_|\__|\__,_|___|_.__/ \__,_|_|
+#
+# MODDWM STATUSBAR - Modular Dynamic Window Manager Statusbar.
+# ----------------------------------------------------------------------------
+#  "THE BEER-WARE LICENSE" (Revision 42):
+#  Plasmoduck <plasmoduck@gmail.com> wrote this file.  As long as you retain this notice you
+#  can do whatever you want with this stuff. If we meet some day, and you think
+#  this stuff is worth it, you can buy me a beer in return - Plasmoduck.
+# ---------------------------------------------------------------------------- 
+
+memory (){
+	free -h | awk '(NR==2){ print $4 }'
+}
+
+cpu (){
+    vmstat | awk 'NR==3 {print $(NF-2)}'
+}
+
+cpu_temp (){
+	sed 's/000$/°C/' /sys/class/thermal/thermal_zone0/temp
+}
+
+volume (){
+	amixer get Master | awk -F'[][]' 'END{ print $4":"$2 }'
+}
+
+print_date (){
+	date +"%H:%M"
+}
+
+while true
+do
+	xsetroot -name "  $(cpu)%  $(memory)  $(cpu_temp)  $(volume)%  $(print_date) "
+	sleep 1s
+done
